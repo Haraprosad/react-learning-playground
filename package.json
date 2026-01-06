@@ -1,0 +1,21 @@
+{
+  "name": "react-learning-playground",
+  "version": "1.0.0",
+  "description": "React learning workspace with exercises, projects, and shared utilities",
+  "private": true,
+  "workspaces": [
+    "exercises/*",
+    "projects/mini-apps/*",
+    "projects/admin-dashboard",
+    "shared"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:hooks": "npm run dev --workspace=exercises/01-hooks",
+    "build:hooks": "npm run build --workspace=exercises/01-hooks",
+    "lint:hooks": "npm run lint --workspace=exercises/01-hooks"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

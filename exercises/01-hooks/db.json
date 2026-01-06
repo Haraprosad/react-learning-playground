@@ -1,0 +1,144 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "username": "johndoe",
+      "phone": "+1-234-567-8901",
+      "website": "johndoe.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "username": "janesmith",
+      "phone": "+1-234-567-8902",
+      "website": "janesmith.com"
+    },
+    {
+      "id": 3,
+      "name": "Bob Johnson",
+      "email": "bob.johnson@example.com",
+      "username": "bobjohnson",
+      "phone": "+1-234-567-8903",
+      "website": "bobjohnson.com"
+    },
+    {
+      "id": 4,
+      "name": "Alice Williams",
+      "email": "alice.williams@example.com",
+      "username": "alicewilliams",
+      "phone": "+1-234-567-8904",
+      "website": "alicewilliams.com"
+    },
+    {
+      "id": 5,
+      "name": "Charlie Brown",
+      "email": "charlie.brown@example.com",
+      "username": "charliebrown",
+      "phone": "+1-234-567-8905",
+      "website": "charliebrown.com"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn-001",
+      "amount": 1200.50,
+      "description": "Monthly Salary",
+      "category": "salary",
+      "date": "2026-01-01T10:00:00.000Z",
+      "type": "income"
+    },
+    {
+      "id": "txn-002",
+      "amount": 45.99,
+      "description": "Grocery Shopping",
+      "category": "groceries",
+      "date": "2026-01-02T14:30:00.000Z",
+      "type": "expense"
+    },
+    {
+      "id": "txn-003",
+      "amount": 89.99,
+      "description": "Electric Bill",
+      "category": "utilities",
+      "date": "2026-01-03T09:15:00.000Z",
+      "type": "expense"
+    },
+    {
+      "id": "txn-004",
+      "amount": 500.00,
+      "description": "Freelance Project",
+      "category": "freelance",
+      "date": "2026-01-04T16:45:00.000Z",
+      "type": "income"
+    },
+    {
+      "id": "txn-005",
+      "amount": 25.50,
+      "description": "Coffee & Snacks",
+      "category": "food",
+      "date": "2026-01-05T11:20:00.000Z",
+      "type": "expense"
+    },
+    {
+      "id": "txn-006",
+      "amount": 150.00,
+      "description": "Internet Bill",
+      "category": "utilities",
+      "date": "2026-01-06T08:00:00.000Z",
+      "type": "expense"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-001",
+      "name": "Salary",
+      "color": "#4CAF50",
+      "icon": "💰"
+    },
+    {
+      "id": "cat-002",
+      "name": "Freelance",
+      "color": "#2196F3",
+      "icon": "💼"
+    },
+    {
+      "id": "cat-003",
+      "name": "Groceries",
+      "color": "#FF9800",
+      "icon": "🛒"
+    },
+    {
+      "id": "cat-004",
+      "name": "Utilities",
+      "color": "#9C27B0",
+      "icon": "⚡"
+    },
+    {
+      "id": "cat-005",
+      "name": "Food",
+      "color": "#F44336",
+      "icon": "🍔"
+    },
+    {
+      "id": "cat-006",
+      "name": "Entertainment",
+      "color": "#E91E63",
+      "icon": "🎬"
+    },
+    {
+      "id": "cat-007",
+      "name": "Transportation",
+      "color": "#00BCD4",
+      "icon": "🚗"
+    },
+    {
+      "id": "cat-008",
+      "name": "Healthcare",
+      "color": "#009688",
+      "icon": "🏥"
+    }
+  ]
+}
