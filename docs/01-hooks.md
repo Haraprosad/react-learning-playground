@@ -15,6 +15,8 @@
    - [useState](#usestate)
    - [useReducer](#usereducer)
    - [useEffect](#useeffect)
+   - [useRef](#useref)
+   - [useLayoutEffect](#uselayouteffect)
    - [useMemo](#usememo)
    - [useCallback](#usecallback)
 3. [Custom Hooks](#custom-hooks)
@@ -632,6 +634,437 @@ useEffect(() => {
 useEffect(() => {
   document.title = `You clicked ${count} times`;
 }, [count]);
+```
+
+---
+
+### useRef
+
+#### Purpose
+Provides a mutable reference that persists across renders without causing re-renders. Used for accessing DOM elements directly and storing mutable values.
+
+#### Why Use It?
+`useRef` gives you two superpowers:
+1. **Direct DOM access** - Focus inputs, measure elements, integrate with third-party libraries
+2. **Persistent storage** - Store values that persist between renders but don't trigger re-renders when changed
+
+#### When to Use
+- ✅ Accessing and manipulating DOM elements (focus, scroll, measure)
+- ✅ Storing mutable values that shouldn't trigger re-renders (timers, intervals, previous values)
+- ✅ Keeping track of previous state/props
+- ✅ Storing references to third-party library instances
+- ✅ Counting renders without causing infinite loops
+
+#### When NOT to Use
+- ❌ When you need the component to re-render on value change (use `useState`)
+- ❌ For derived state or computed values (use `useMemo`)
+- ❌ As a replacement for proper state management
+
+#### How to Use
+
+**Implementation Reference:** [App.tsx - Ref Demo](../exercises/01-hooks/src/App.tsx)
+
+```typescript
+import { useRef, useEffect } from 'react';
+
+// Use Case 1: DOM Access
+function FocusInput() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const handleFocus = () => {
+    // Access DOM element directly
+    inputRef.current?.focus();
+    inputRef.current?.select();
+  };
+  
+  return (
+    <>
+      <input ref={inputRef} type="text" />
+      <button onClick={handleFocus}>Focus Input</button>
+    </>
+  );
+}
+
+// Use Case 2: Store Mutable Values
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+  const intervalRef = useRef<number>();
+  
+  useEffect(() => {
+    // Store interval ID in ref
+    intervalRef.current = setInterval(() => {
+      setSeconds(s => s + 1);
+    }, 1000);
+    
+    return () => {
+      // Clear using stored ref
+      clearInterval(intervalRef.current);
+    };
+  }, []);
+  
+  return <div>{seconds} seconds</div>;
+}
+
+// Use Case 3: Track Previous Value
+function Counter() {
+  const [count, setCount] = useState(0);
+  const previousCountRef = useRef<number>();
+  
+  useEffect(() => {
+    // Update ref after render (doesn't cause re-render)
+    previousCountRef.current = count;
+  }, [count]);
+  
+  return (
+    <div>
+      <p>Current: {count}</p>
+      <p>Previous: {previousCountRef.current}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+// Use Case 4: Count Renders (Without Causing Re-render)
+function RenderCounter() {
+  const renderCount = useRef(0);
+  
+  // This doesn't cause re-render!
+  renderCount.current = renderCount.current + 1;
+  
+  return <div>Renders: {renderCount.current}</div>;
+}
+```
+
+#### How It Works Internally
+
+```typescript
+// Simplified internal implementation
+function useRef<T>(initialValue: T): { current: T } {
+  // React stores this in the component's fiber
+  const ref = { current: initialValue };
+  
+  // Returns same object on every render
+  // Mutating .current doesn't trigger re-render
+  return ref;
+}
+```
+
+#### useRef vs useState: Key Differences
+
+| Feature | useRef | useState |
+|---------|--------|----------|
+| Triggers re-render | ❌ No | ✅ Yes |
+| Mutable | ✅ Yes (.current) | ❌ No (need setState) |
+| Persists across renders | ✅ Yes | ✅ Yes |
+| Use for UI values | ❌ No | ✅ Yes |
+| Use for DOM access | ✅ Yes | ❌ No |
+| Use for timers/intervals | ✅ Yes | ❌ No |
+
+#### Best Practices
+
+1. **Check for null before accessing DOM refs:**
+```typescript
+// ❌ BAD - Might be null
+inputRef.current.focus();
+
+// ✅ GOOD - Safe access
+inputRef.current?.focus();
+
+if (inputRef.current) {
+  inputRef.current.focus();
+}
+```
+
+2. **Don't read/write refs during rendering:**
+```typescript
+// ❌ BAD - Reading ref during render
+function Component() {
+  const renderCount = useRef(0);
+  renderCount.current++; // Technically works but not recommended
+  
+  return <div>Count: {renderCount.current}</div>;
+}
+
+// ✅ GOOD - Update in useEffect
+function Component() {
+  const renderCount = useRef(0);
+  
+  useEffect(() => {
+    renderCount.current++;
+  });
+  
+  return <div>Count: {renderCount.current}</div>;
+}
+```
+
+3. **Use refs for imperative, not declarative code:**
+```typescript
+// ❌ BAD - Declarative (use state)
+function Component() {
+  const countRef = useRef(0);
+  return (
+    <button onClick={() => countRef.current++}>
+      Count: {countRef.current}
+    </button>
+  );
+}
+
+// ✅ GOOD - Imperative DOM manipulation
+function Component() {
+  const divRef = useRef<HTMLDivElement>(null);
+  
+  const changeColor = () => {
+    if (divRef.current) {
+      divRef.current.style.backgroundColor = 'red';
+    }
+  };
+  
+  return <div ref={divRef} onClick={changeColor}>Click me</div>;
+}
+```
+
+#### Common Pitfalls
+
+❌ **Expecting re-render when ref changes:**
+```typescript
+const countRef = useRef(0);
+countRef.current++; // Component won't re-render!
+```
+
+❌ **Using ref for state that should trigger UI updates:**
+```typescript
+// ❌ WRONG - UI won't update
+const [items] = useState([]);
+const countRef = useRef(0);
+
+const addItem = () => {
+  countRef.current++; // Count updates but UI doesn't!
+};
+
+// ✅ RIGHT - Use state
+const [count, setCount] = useState(0);
+const addItem = () => setCount(c => c + 1);
+```
+
+---
+
+### useLayoutEffect
+
+#### Purpose
+Similar to `useEffect`, but runs synchronously after DOM mutations and before the browser paints. Used for reading layout and synchronously re-rendering.
+
+#### Why Use It?
+`useEffect` runs asynchronously *after* the browser paints, which can cause visual flickering. `useLayoutEffect` runs *before* paint, allowing you to measure and adjust the DOM without the user seeing any flicker.
+
+#### When to Use
+- ✅ Measuring DOM elements (width, height, position)
+- ✅ Positioning tooltips, popovers, or modals based on other elements
+- ✅ Preventing visual flicker or "jumps"
+- ✅ Synchronizing with third-party libraries that manipulate DOM
+- ✅ Animations that need to start before paint
+
+#### When NOT to Use
+- ❌ Data fetching (use `useEffect`)
+- ❌ Subscriptions or event listeners (use `useEffect`)
+- ❌ Any side effect that doesn't need to block paint
+- ❌ When there's no visual difference (useEffect is faster)
+
+#### How to Use
+
+**Implementation Reference:** [App.tsx - Layout Effect Demo](../exercises/01-hooks/src/App.tsx)
+
+```typescript
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+
+// Measuring DOM elements
+function Tooltip() {
+  const [height, setHeight] = useState(0);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  
+  // ✅ useLayoutEffect - Measures BEFORE paint (no flicker)
+  useLayoutEffect(() => {
+    if (tooltipRef.current) {
+      const rect = tooltipRef.current.getBoundingClientRect();
+      setHeight(rect.height);
+    }
+  }, []);
+  
+  return (
+    <div 
+      ref={tooltipRef}
+      style={{ top: `${height}px` }} // Positioned correctly on first paint
+    >
+      Tooltip content
+    </div>
+  );
+}
+
+// Preventing flicker
+function AnimatedComponent() {
+  const [isVisible, setIsVisible] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+  
+  // ✅ Runs synchronously before paint
+  useLayoutEffect(() => {
+    if (elementRef.current) {
+      // Animate from here without flicker
+      elementRef.current.style.transform = 'translateX(0)';
+    }
+  }, [isVisible]);
+  
+  return <div ref={elementRef}>Content</div>;
+}
+```
+
+#### useEffect vs useLayoutEffect: Timing Comparison
+
+**useEffect (Asynchronous):**
+```
+1. React renders component
+2. Browser paints to screen
+3. useEffect runs
+4. If state changes → re-render → paint again
+   ⚠️ User sees flicker/jump
+```
+
+**useLayoutEffect (Synchronous):**
+```
+1. React renders component
+2. useLayoutEffect runs (blocks painting)
+3. If state changes → React updates immediately
+4. Browser paints to screen (only once)
+   ✅ No flicker!
+```
+
+#### Visual Comparison
+
+```typescript
+function ComparisonDemo() {
+  const [show, setShow] = useState(false);
+  const [height, setHeight] = useState(0);
+  const boxRef = useRef<HTMLDivElement>(null);
+  
+  // ❌ useEffect - May see flicker
+  useEffect(() => {
+    if (show && boxRef.current) {
+      const rect = boxRef.current.getBoundingClientRect();
+      setHeight(rect.height); // Re-render after paint = flicker
+    }
+  }, [show]);
+  
+  // ✅ useLayoutEffect - No flicker
+  useLayoutEffect(() => {
+    if (show && boxRef.current) {
+      const rect = boxRef.current.getBoundingClientRect();
+      setHeight(rect.height); // Update before paint = smooth
+    }
+  }, [show]);
+  
+  return (
+    <div>
+      <button onClick={() => setShow(!show)}>Toggle</button>
+      {show && (
+        <div ref={boxRef}>
+          Content with dynamic height
+          <p>Measured height: {height}px</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+#### Best Practices
+
+1. **Prefer useEffect unless you have a specific reason:**
+```typescript
+// ✅ Most cases: Use useEffect
+useEffect(() => {
+  fetchData(); // Doesn't need to block paint
+}, []);
+
+// ✅ Only when needed: Use useLayoutEffect
+useLayoutEffect(() => {
+  const rect = element.getBoundingClientRect(); // Needs synchronous read
+  positionTooltip(rect);
+}, []);
+```
+
+2. **Be aware of performance implications:**
+```typescript
+// ⚠️ useLayoutEffect blocks painting
+// Keep it fast!
+useLayoutEffect(() => {
+  // ❌ BAD - Expensive operation
+  for (let i = 0; i < 1000000; i++) {
+    // Heavy computation
+  }
+}, []);
+
+// ✅ GOOD - Quick DOM measurements only
+useLayoutEffect(() => {
+  const height = element.getBoundingClientRect().height;
+  setHeight(height);
+}, []);
+```
+
+3. **Use for measurements, not side effects:**
+```typescript
+// ❌ WRONG - Use useEffect for this
+useLayoutEffect(() => {
+  const subscription = subscribe();
+  return () => unsubscribe();
+}, []);
+
+// ✅ RIGHT - Measurements that affect layout
+useLayoutEffect(() => {
+  const { width, height } = element.getBoundingClientRect();
+  updateTooltipPosition(width, height);
+}, []);
+```
+
+#### Common Pitfalls
+
+❌ **Using it when useEffect would work:**
+```typescript
+// ❌ Unnecessary - doesn't affect layout
+useLayoutEffect(() => {
+  console.log('Component mounted');
+}, []);
+
+// ✅ Use useEffect instead
+useEffect(() => {
+  console.log('Component mounted');
+}, []);
+```
+
+❌ **Slow synchronous operations:**
+```typescript
+// ❌ BAD - Blocks painting for too long
+useLayoutEffect(() => {
+  // Heavy computation or API call
+  const data = expensiveSync Operation();
+  updateState(data);
+}, []);
+
+// ✅ GOOD - Use useEffect for async work
+useEffect(() => {
+  fetchData().then(updateState);
+}, []);
+```
+
+#### Server-Side Rendering Warning
+
+⚠️ **useLayoutEffect doesn't run on the server:**
+
+```typescript
+// Warning in console during SSR:
+// "useLayoutEffect does nothing on the server"
+
+// Solution: Use useEffect for SSR-compatible code
+// Or conditionally use based on environment
+const useIsomorphicLayoutEffect = 
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 ```
 
 ---
@@ -2678,7 +3111,7 @@ The complete project structure with all files:
 ```
 exercises/01-hooks/
 ├── src/
-│   ├── App.tsx                    # Main demo showcase (7 sections)
+│   ├── App.tsx                    # Main demo showcase (9 sections)
 │   ├── App.css                    # Styling for all demos
 │   ├── main.tsx                   # App entry point
 │   ├── index.css                  # Global styles
@@ -2721,14 +3154,16 @@ exercises/01-hooks/
 
 ### Key Files Explained
 
-**App.tsx** - Main demonstration file with 7 sections:
+**App.tsx** - Main demonstration file with 9 sections:
 1. Counter (useState)
 2. Settings Panel (useReducer)
 3. Timer/Stopwatch (useEffect)
-4. List Filter (useMemo)
-5. Parent-Child Demo (useCallback)
-6. Custom Hooks Demo (all custom hooks)
-7. Error Boundary Demo
+4. Ref Demo (useRef)
+5. Layout Effect Demo (useLayoutEffect)
+6. List Filter (useMemo)
+7. Parent-Child Demo (useCallback)
+8. Custom Hooks Demo (all custom hooks)
+9. Error Boundary Demo
 
 **Custom Hooks** - Reusable logic extraction:
 - `useDebounce` - Delay value updates for search optimization
@@ -3034,6 +3469,8 @@ React Hooks revolutionized how we write React applications. Key takeaways:
 | useState | Simple state | Single values, toggles |
 | useReducer | Complex state | Multiple related values, actions |
 | useEffect | Side effects | API calls, subscriptions, timers |
+| useRef | Mutable ref | DOM access, persistent values |
+| useLayoutEffect | Sync DOM updates | Measurements, positioning |
 | useMemo | Memoize value | Expensive calculations |
 | useCallback | Memoize function | Callbacks to memoized children |
 | Custom Hooks | Reusable logic | Share logic between components |

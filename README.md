@@ -41,65 +41,75 @@ react-learning-playground/
 
 **Status:** Complete | **Documentation:** [docs/01-hooks.md](docs/01-hooks.md) | **Practice:** [exercises/01-hooks](exercises/01-hooks)
 
-Master React Hooks through 7 interactive demos covering:
+Master React Hooks through 9 interactive demos covering:
 
 #### Core Hooks
 1. **useState** - Simple state management
    - **Why:** Add state to functional components
    - **When:** Single, independent values (counters, toggles, form inputs)
-   - **Practice:** [Counter Demo](exercises/01-hooks/src/App.tsx#L22-L36)
+   - **Practice:** [Counter Demo](exercises/01-hooks/src/App.tsx)
 
 2. **useReducer** - Complex state management
    - **Why:** Handle multiple related state values with coordinated updates
    - **When:** Complex state logic, state depends on previous state, multiple actions
-   - **Practice:** [Settings Panel Demo](exercises/01-hooks/src/App.tsx#L66-L174)
+   - **Practice:** [Settings Panel Demo](exercises/01-hooks/src/App.tsx)
 
 3. **useEffect** - Side effects & lifecycle
    - **Why:** Perform side effects (API calls, subscriptions, timers)
    - **When:** Data fetching, event listeners, DOM manipulation, cleanup needed
-   - **Practice:** [Timer/Stopwatch Demo](exercises/01-hooks/src/App.tsx#L180-L223)
+   - **Practice:** [Timer/Stopwatch Demo](exercises/01-hooks/src/App.tsx)
 
-4. **useMemo** - Performance optimization
+4. **useRef** - DOM access & persistent values
+   - **Why:** Access DOM directly, store values without re-rendering
+   - **When:** Focus inputs, track previous values, store timers
+   - **Practice:** [Ref Demo](exercises/01-hooks/src/App.tsx)
+
+5. **useLayoutEffect** - Synchronous DOM updates
+   - **Why:** Measure DOM before paint, prevent visual flicker
+   - **When:** DOM measurements, tooltips, positioning
+   - **Practice:** [Layout Effect Demo](exercises/01-hooks/src/App.tsx)
+
+6. **useMemo** - Performance optimization
    - **Why:** Prevent expensive recalculations on every render
    - **When:** Heavy computations, filtering large datasets, preventing wasted work
-   - **Practice:** [List Filter Demo](exercises/01-hooks/src/App.tsx#L229-L312)
+   - **Practice:** [List Filter Demo](exercises/01-hooks/src/App.tsx)
 
-5. **useCallback** - Function memoization
+7. **useCallback** - Function memoization
    - **Why:** Prevent unnecessary function recreation and child re-renders
    - **When:** Passing callbacks to memoized children, functions as hook dependencies
-   - **Practice:** [Parent-Child Memo Demo](exercises/01-hooks/src/App.tsx#L318-L379)
+   - **Practice:** [Parent-Child Memo Demo](exercises/01-hooks/src/App.tsx)
 
 #### Custom Hooks
 Build reusable logic that works across components:
 
-6. **useDebounce** - Optimize search inputs
+8. **useDebounce** - Optimize search inputs
    - **Why:** Reduce API calls by delaying updates until user stops typing
    - **When:** Search bars, autocomplete, any rapid input changes
    - **Practice:** [useDebounce.ts](exercises/01-hooks/src/custom-hooks/useDebounce.ts)
 
-7. **useLocalStorage** - Persistent state
+9. **useLocalStorage** - Persistent state
    - **Why:** Sync state with localStorage automatically
    - **When:** Theme preferences, form drafts, user settings
    - **Practice:** [useLocalStorage.ts](exercises/01-hooks/src/custom-hooks/useLocalStorage.ts)
 
-8. **useApi** - Data fetching pattern
-   - **Why:** Standardize API calls with loading/error states
-   - **When:** Fetching data from REST APIs, managing async operations
-   - **Practice:** [useApi.ts](exercises/01-hooks/src/custom-hooks/useApi.ts)
+10. **useApi** - Data fetching pattern
+    - **Why:** Standardize API calls with loading/error states
+    - **When:** Fetching data from REST APIs, managing async operations
+    - **Practice:** [useApi.ts](exercises/01-hooks/src/custom-hooks/useApi.ts)
 
-9. **useAuth** - Authentication management
-   - **Why:** Centralize auth state and logic
-   - **When:** User login/logout, protected routes, auth-dependent UI
-   - **Practice:** [useAuth.ts](exercises/01-hooks/src/custom-hooks/useAuth.ts)
+11. **useAuth** - Authentication management
+    - **Why:** Centralize auth state and logic
+    - **When:** User login/logout, protected routes, auth-dependent UI
+    - **Practice:** [useAuth.ts](exercises/01-hooks/src/custom-hooks/useAuth.ts)
 
 #### Advanced Concepts
 
-10. **Error Boundaries** - Graceful error handling
+12. **Error Boundaries** - Graceful error handling
     - **Why:** Catch errors in component tree without crashing the app
     - **When:** Wrap risky components, provide fallback UI
     - **Practice:** [ErrorBoundary.tsx](exercises/01-hooks/src/components/ErrorBoundary.tsx)
 
-11. **TypeScript Integration** - Type-safe React
+13. **TypeScript Integration** - Type-safe React
     - **Why:** Catch errors at compile time, better IDE support
     - **When:** Always! Production apps should use TypeScript
     - **Practice:** [types/](exercises/01-hooks/src/types/)
