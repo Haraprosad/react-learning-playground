@@ -1,13 +1,8 @@
 {
   "products": [
     {
-      "id": "2",
-      "name": "Smartphone",
-      "price": 499.99
-    },
-    {
       "id": "1767846317734",
-      "name": "Iphone",
+      "name": "Iphone15",
       "price": 200
     },
     {
