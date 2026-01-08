@@ -13,12 +13,14 @@ interface ProductsState {
     isLoading: boolean;
     products: Product[],
     error: string | null;
+    editingProductId: string | null;
 }
 
 const initialState: ProductsState = {
     isLoading: false,
     products: [],
     error: null,
+    editingProductId: null,
 }
 
 const BASE_URL = 'http://localhost:3003/products';
@@ -68,8 +70,13 @@ export const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    
+    setEditingProduct: (state, action: PayloadAction<string>) => {
+      state.editingProductId = action.payload;
     },
+    clearEditingProduct: (state) => {
+      state.editingProductId = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
         state.isLoading = true;
@@ -95,9 +102,12 @@ export const productsSlice = createSlice({
             if (index !== -1) {
                 state.products[index] = action.payload;
             }
+            state.editingProductId = null;
         });
   },
 })
+
+export const { setEditingProduct, clearEditingProduct } = productsSlice.actions;
 
 
 export default productsSlice.reducer

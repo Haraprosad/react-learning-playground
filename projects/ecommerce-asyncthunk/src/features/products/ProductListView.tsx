@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, fetchProducts, type Product } from "./productsSlice";
+import {
+  deleteProduct,
+  fetchProducts,
+  setEditingProduct,
+  type Product,
+} from "./productsSlice";
 import { type AppDispatch, type RootState } from "../../../app/store";
 
-interface ProductListViewProps {
-  onHandleEdit: (product: Product) => void;
-}
-
-const ProductListView = ({ onHandleEdit }: ProductListViewProps) => {
+const ProductListView = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { products, isLoading, error } = useSelector(
     (state: RootState) => state.productsR
@@ -43,7 +44,7 @@ const ProductListView = ({ onHandleEdit }: ProductListViewProps) => {
                   Delete
                 </button>
                 <button
-                  onClick={() => onHandleEdit(product)}
+                  onClick={() => dispatch(setEditingProduct(product.id))}
                   style={{ marginLeft: "10px" }}
                 >
                   Edit

@@ -1,36 +1,45 @@
-import { useState, type FormEvent, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { createProduct, updateProduct, type Product } from "./productsSlice";
-import { type AppDispatch } from "../../../app/store";
+import { type FormEvent, useMemo, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createProduct,
+  updateProduct,
+  clearEditingProduct,
+} from "./productsSlice";
+import { type AppDispatch, type RootState } from "../../../app/store";
 
-interface ProductFormProps {
-  productToEdit: Product | null;
-  onCancel: () => void;
-}
-
-const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
+const ProductForm = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { products, editingProductId } = useSelector(
+    (state: RootState) => state.productsR
+  );
 
-  const [products, setProducts] = useState({
-    id: "",
-    name: "",
-    price: "",
-  });
+  const productToEdit = products.find((p) => p.id === editingProductId) || null;
+
+  const initialFormData = useMemo(() => {
+    if (productToEdit) {
+      return {
+        id: productToEdit.id.toString(),
+        name: productToEdit.name,
+        price: productToEdit.price.toString(),
+      };
+    }
+    return {
+      id: "",
+      name: "",
+      price: "",
+    };
+  }, [productToEdit]);
+
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    if (productToEdit) {
-      setProducts({
-        id: productToEdit.id.toString() ?? "",
-        name: productToEdit.name ?? "",
-        price: productToEdit.price.toString() ?? "",
-      });
-    }
-  }, [productToEdit]);
+    setFormData(initialFormData);
+  }, [initialFormData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProducts((prevProducts) => ({
-      ...prevProducts,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
     }));
   };
@@ -38,7 +47,7 @@ const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!products.name || !products.price) {
+    if (!formData.name || !formData.price) {
       alert("Please fill in all fields");
       return;
     }
@@ -47,29 +56,28 @@ const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
       // Update existing product
       const updatedProduct = {
         id: productToEdit.id,
-        name: products.name,
-        price: parseFloat(products.price),
+        name: formData.name,
+        price: parseFloat(formData.price),
       };
       dispatch(
         updateProduct({ id: productToEdit.id, product: updatedProduct })
       );
       // Reset form
-      setProducts({
+      setFormData({
         id: "",
         name: "",
         price: "",
       });
-      onCancel();
     } else {
       // Create new product
       const newProduct = {
         id: Date.now().toString(), // Temporary ID generation
-        name: products.name,
-        price: parseFloat(products.price),
+        name: formData.name,
+        price: parseFloat(formData.price),
       };
       dispatch(createProduct(newProduct));
       // Reset form
-      setProducts({
+      setFormData({
         id: "",
         name: "",
         price: "",
@@ -78,12 +86,12 @@ const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
   };
 
   const handleCancel = () => {
-    setProducts({
+    setFormData({
       id: "",
       name: "",
       price: "",
     });
-    onCancel();
+    dispatch(clearEditingProduct());
   };
 
   return (
@@ -101,7 +109,7 @@ const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
             type="text"
             id="name"
             name="name"
-            value={products.name}
+            value={formData.name}
             onChange={handleChange}
             style={{ width: "100%", padding: "8px" }}
             placeholder="Enter product name"
@@ -119,7 +127,7 @@ const ProductForm = ({ productToEdit, onCancel }: ProductFormProps) => {
             type="number"
             id="price"
             name="price"
-            value={products.price}
+            value={formData.price}
             onChange={handleChange}
             step="0.01"
             style={{ width: "100%", padding: "8px" }}
