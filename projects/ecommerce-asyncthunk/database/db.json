@@ -1,0 +1,29 @@
+{
+  "products": [
+    {
+      "id": "2",
+      "name": "Smartphone",
+      "price": 499.99
+    },
+    {
+      "id": "1767846317734",
+      "name": "Iphone",
+      "price": 200
+    },
+    {
+      "id": "1767846328638",
+      "name": "Iphone",
+      "price": 5000
+    },
+    {
+      "id": "1767847037265",
+      "name": "hi",
+      "price": 12
+    },
+    {
+      "id": "1767847441002",
+      "name": "newNow",
+      "price": 23
+    }
+  ]
+}
