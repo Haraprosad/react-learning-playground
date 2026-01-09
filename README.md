@@ -6,6 +6,7 @@ A comprehensive, hands-on learning journey through React concepts with TypeScrip
 
 - **[Topic 1: React Hooks - Complete Guide](docs/01-hooks.md)** - Master useState, useReducer, useEffect, useMemo, useCallback, and custom hooks
 - **[Topic 2: RTK Query, React Hook Form & Zod](docs/02-rtk-query-form-validation.md)** - Master data fetching, caching, form validation, and TypeScript-first schemas
+- **[Topic 3: Higher-Order Components (HOCs)](docs/03-higher-order-components.md)** - Master HOCs through real-world authentication and authorization patterns
 
 ## 📚 Learning Philosophy
 
