@@ -4,6 +4,8 @@ import { store } from "./store/store";
 import { AuthProvider } from "./context/AuthContext";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import ForgotPassword from "./components/ForgotPassword";
+import PasswordReset from "./components/PasswordReset";
 import Dashboard from "./components/Dashboard";
 import AdminPanel from "./components/AdminPanel";
 import UserProfile from "./components/UserProfile";
@@ -18,6 +20,8 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/auth/reset-password" element={<PasswordReset />} />
 
             {/* Protected Routes - Require Authentication */}
             {/* Dashboard is wrapped with withAuth HOC */}

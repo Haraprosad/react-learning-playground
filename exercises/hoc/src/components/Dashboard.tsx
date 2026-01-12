@@ -35,8 +35,24 @@ function Dashboard() {
             <strong>Email:</strong> {user?.email}
           </p>
           <p>
-            <strong>Username:</strong> {user?.username}
+            <strong>UID:</strong> {user?.uid}
           </p>
+          {user?.photo_url && (
+            <div style={{ marginTop: "10px" }}>
+              <strong>Profile Photo:</strong>
+              <br />
+              <img
+                src={user.photo_url}
+                alt="Profile"
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  marginTop: "8px",
+                }}
+              />
+            </div>
+          )}
         </div>
 
         <div

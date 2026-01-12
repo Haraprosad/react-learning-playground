@@ -7,6 +7,7 @@ A comprehensive, hands-on learning journey through React concepts with TypeScrip
 - **[Topic 1: React Hooks - Complete Guide](docs/01-hooks.md)** - Master useState, useReducer, useEffect, useMemo, useCallback, and custom hooks
 - **[Topic 2: RTK Query, React Hook Form & Zod](docs/02-rtk-query-form-validation.md)** - Master data fetching, caching, form validation, and TypeScript-first schemas
 - **[Topic 3: Higher-Order Components (HOCs)](docs/03-higher-order-components.md)** - Master HOCs through real-world authentication and authorization patterns
+- **[Topic 4: Authentication System Architecture](docs/04-auth-system.md)** - Complete authentication system with Firebase, MongoDB, FastAPI, and React (Google OAuth, Email/Password, Password Reset)
 
 ## 📚 Learning Philosophy
 
@@ -335,10 +336,27 @@ After completing Topic 1, you should be able to:
   - Error Boundaries
   - Mock API Setup
 
-- 🔜 **Topic 2: Component Patterns** (Coming Soon)
-- 🔜 **Topic 3: State Management** (Coming Soon)
-- 🔜 **Topic 4: Routing & Navigation** (Coming Soon)
-- 🔜 **Topic 5: Testing** (Coming Soon)
+- ✅ **Topic 2: RTK Query, Form Validation & State Management** (Complete - January 2026)
+  - Redux Toolkit Query for data fetching
+  - React Hook Form with Zod validation
+  - TypeScript-first schemas
+  - Optimistic updates and caching
+
+- ✅ **Topic 3: Higher-Order Components** (Complete - January 2026)
+  - Authentication HOCs (withAuth)
+  - Role-based access control (withRole)
+  - Component composition patterns
+  - Real-world authorization
+
+- ✅ **Topic 4: Authentication System Architecture** (Complete - January 12, 2026)
+  - Firebase Authentication (Google OAuth, Email/Password)
+  - MongoDB user profiles and roles
+  - FastAPI backend with token verification
+  - Complete password reset flow
+  - Account unification by email
+
+- 🔜 **Topic 5: Component Patterns** (Coming Soon)
+- 🔜 **Topic 6: Testing** (Coming Soon)
 
 ## 🤝 Contributing
 

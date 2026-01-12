@@ -28,5 +28,8 @@ export default defineConfig([
         tsconfigRootDir: __dirname,
       },
     },
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
   },
 ]);

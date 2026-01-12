@@ -1,0 +1,18 @@
+fastapi==0.109.0
+uvicorn==0.27.0
+firebase-admin==6.4.0
+pymongo==4.6.1
+motor==3.3.2
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+
+# Production Dependencies
+slowapi==0.1.9  # Rate limiting
+python-json-logger==2.0.7  # Structured logging
+sentry-sdk[fastapi]==1.40.0  # Error tracking
+python-jose[cryptography]==3.3.0  # JWT handling
+passlib[bcrypt]==1.7.4  # Password hashing (if needed)
+email-validator==2.1.0  # Email validation
+python-dotenv==1.0.0  # Environment variables
+redis==5.0.1  # For rate limiting cache (optional)
+aiocache==0.12.2  # Async caching
