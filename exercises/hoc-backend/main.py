@@ -30,6 +30,7 @@ from middleware import (
     LoggingMiddleware,
     SecurityHeadersMiddleware
 )
+import redis_client
 
 # Initialize Sentry for error tracking
 if settings.SENTRY_DSN:
@@ -54,6 +55,13 @@ async def lifespan(app: FastAPI):
     
     # Startup
     try:
+        logger.info("🚀 Starting application initialization...")
+        
+        # Initialize Redis
+        logger.info("Initializing Redis connection...")
+        await redis_client.init_redis()
+        
+        # Initialize MongoDB
         logger.info("Initializing MongoDB connection...")
         
         mongodb_client = AsyncIOMotorClient(
@@ -88,18 +96,34 @@ async def lifespan(app: FastAPI):
         await db.users.create_index("email", unique=True)
         # Firebase UID is indexed but not unique (can change when switching providers)
         await db.users.create_index("firebase_uid")
+        
+        # Compound index for common queries (email + provider)
+        await db.users.create_index([("email", 1), ("provider", 1)])
+        
+        # Index for last_login queries (analytics)
+        await db.users.create_index([("last_login", -1)])
+        
         logger.info("✅ Database indexes created")
+        logger.info("🎉 Application initialization complete!")
         
     except Exception as e:
-        logger.error(f"Failed to connect to MongoDB: {str(e)}", exc_info=True)
+        logger.error(f"❌ Failed to initialize application: {str(e)}", exc_info=True)
         raise
     
     yield
     
     # Shutdown
+    logger.info("🛑 Shutting down application...")
+    
+    # Close Redis connection
+    await redis_client.close_redis()
+    
+    # Close MongoDB connection
     if mongodb_client:
         mongodb_client.close()
         logger.info("❌ MongoDB connection closed")
+    
+    logger.info("👋 Application shutdown complete")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -149,7 +173,7 @@ class UpdateRoleRequest(BaseModel):
 async def health_check():
     """
     Comprehensive health check endpoint.
-    Returns status of all critical services.
+    Returns status of all critical services (MongoDB, Redis, Firebase).
     """
     health_status = {
         "status": "healthy",
@@ -170,6 +194,16 @@ async def health_check():
         logger.error(f"Database health check failed: {str(e)}")
         health_status["database"] = "disconnected"
         health_status["status"] = "unhealthy"
+    
+    # Check Redis connection
+    redis_health = await redis_client.health_check()
+    health_status["redis"] = redis_health
+    if redis_health.get("status") != "healthy":
+        health_status["status"] = "degraded"
+    
+    # Get cache statistics
+    cache_stats = await redis_client.get_cache_stats()
+    health_status["cache_stats"] = cache_stats
     
     status_code = status.HTTP_200_OK if health_status["status"] == "healthy" else status.HTTP_503_SERVICE_UNAVAILABLE
     
