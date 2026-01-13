@@ -4,6 +4,32 @@ import { useAuth } from "../context/AuthContext";
 function Dashboard() {
   const { user, logout } = useAuth();
 
+  const getRoleBadge = () => {
+    const badges = {
+      superadmin: { color: "#dc3545", emoji: "🔴", label: "SUPERADMIN" },
+      admin: { color: "#0d6efd", emoji: "🔵", label: "ADMIN" },
+      user: { color: "#6c757d", emoji: "⚪", label: "USER" },
+    };
+
+    const badge = badges[user?.role as keyof typeof badges] || badges.user;
+
+    return (
+      <span
+        style={{
+          display: "inline-block",
+          padding: "6px 12px",
+          borderRadius: "12px",
+          fontSize: "13px",
+          fontWeight: "600",
+          backgroundColor: badge.color + "20",
+          color: badge.color,
+        }}
+      >
+        {badge.emoji} {badge.label}
+      </span>
+    );
+  };
+
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <div
@@ -29,7 +55,7 @@ function Dashboard() {
         >
           <h3>Your Profile Information:</h3>
           <p>
-            <strong>Role:</strong> {user?.role}
+            <strong>Role:</strong> {getRoleBadge()}
           </p>
           <p>
             <strong>Email:</strong> {user?.email}
@@ -77,19 +103,24 @@ function Dashboard() {
             👤 My Profile
           </Link>
 
-          <Link
-            to="/admin"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#6f42c1",
-              color: "white",
-              textDecoration: "none",
-              borderRadius: "5px",
-              fontWeight: "bold",
-            }}
-          >
-            🔐 Admin Panel (Admin Only)
-          </Link>
+          {(user?.role === "admin" || user?.role === "superadmin") && (
+            <Link
+              to="/admin"
+              style={{
+                padding: "10px 20px",
+                backgroundColor:
+                  user.role === "superadmin" ? "#dc3545" : "#6f42c1",
+                color: "white",
+                textDecoration: "none",
+                borderRadius: "5px",
+                fontWeight: "bold",
+              }}
+            >
+              {user.role === "superadmin"
+                ? "🔴 Superadmin Panel"
+                : "🔐 Admin Panel"}
+            </Link>
+          )}
 
           <button
             onClick={logout}

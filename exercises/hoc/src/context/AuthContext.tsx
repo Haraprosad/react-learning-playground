@@ -66,69 +66,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const firebaseUser = result.user;
 
       // Get Firebase token
-      const token = await firebaseUser.getIdToken();
+      const token = await firebaseUser.getIdToken(true);
 
-      // Register/sync user with backend (handles account merging)
+      // Register user in backend (creates if doesn't exist)
+      // Ignore errors - user might already exist, onAuthStateChanged will fetch the data
       try {
-        const userData = await authService.register({
+        await authService.register({
           firebase_uid: firebaseUser.uid,
           email: firebaseUser.email!,
           name: firebaseUser.displayName || undefined,
           photo_url: firebaseUser.photoURL || undefined,
           provider: "google",
         });
-
-        setUser(userData);
-      } catch (error: unknown) {
-        // If user already exists with this exact provider, just fetch their data
-        if (
-          error instanceof Error &&
-          error.message.includes("already registered")
-        ) {
-          const userData = await authService.getCurrentUser(token);
-          setUser(userData);
-        } else {
-          // For any other error, try fetching user data
-          // (backend might have merged the account)
-          try {
-            const userData = await authService.getCurrentUser(token);
-            setUser(userData);
-          } catch (fetchError) {
-            console.error(
-              "Failed to fetch user after registration error:",
-              fetchError
-            );
-            throw error;
-          }
-        }
+      } catch (error) {
+        // User already exists - that's fine, onAuthStateChanged will fetch their data
+        console.log("User already registered, fetching existing data...");
       }
+
+      // User data will be set by onAuthStateChanged listener
     } catch (error) {
       console.error("Sign-in error:", error);
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
+    // Don't set isLoading to false here - let onAuthStateChanged do it
   };
 
   const signInWithEmail = async (email: string, password: string) => {
     setIsLoading(true);
     try {
       // Firebase Email/Password Sign-In
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const firebaseUser = result.user;
-
-      // Get Firebase token
-      const token = await firebaseUser.getIdToken();
-
-      // Fetch user data from backend (includes role)
-      const userData = await authService.getCurrentUser(token);
-      setUser(userData);
+      // Note: onAuthStateChanged will automatically fetch user data
+      await signInWithEmailAndPassword(auth, email, password);
+      // User data will be set by onAuthStateChanged listener
     } catch (error) {
       console.error("Sign-in error:", error);
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
+    // Don't set isLoading to false here - let onAuthStateChanged do it
   };
 
   const signUpWithEmail = async (
@@ -150,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = await firebaseUser.getIdToken();
 
       // Register user with backend
-      const userData = await authService.register({
+      await authService.register({
         firebase_uid: firebaseUser.uid,
         email: firebaseUser.email!,
         name: name || undefined,
@@ -158,13 +134,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         provider: "email",
       });
 
-      setUser(userData);
+      // User data will be set by onAuthStateChanged listener
     } catch (error) {
       console.error("Sign-up error:", error);
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
+    // Don't set isLoading to false here - let onAuthStateChanged do it
   };
 
   const resetPassword = async (email: string) => {

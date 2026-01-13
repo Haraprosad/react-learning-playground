@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
+    # Superadmin Credentials (Optional - for seed script)
+    SUPERADMIN_EMAIL: Optional[str] = None
+    SUPERADMIN_PASSWORD: Optional[str] = None
+    SUPERADMIN_NAME: Optional[str] = None
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

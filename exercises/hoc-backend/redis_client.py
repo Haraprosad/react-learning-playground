@@ -308,6 +308,11 @@ async def revoke_user_sessions(user_id: str):
         logger.error(f"Failed to revoke user sessions: {e}")
         return 0
 
+# Alias for better naming consistency
+async def revoke_all_sessions(user_id: str):
+    """Alias for revoke_user_sessions - revokes all sessions for a user"""
+    return await revoke_user_sessions(user_id)
+
 
 async def revoke_single_session(user_id: str, token: str):
     """Revoke a specific session (logout from current device)"""
